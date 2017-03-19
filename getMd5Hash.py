@@ -62,9 +62,10 @@ def FindHash(path) :
             import traceback
             # Print the stack traceback
             traceback.print_exc()
-            return -2
+            raise Exception('Error Caused while finding the hashvalue')
+            
     else :
         raise Exception('Function Implemented only to find MD5-Hash for files or directory. \n The given path is neither a file or directory.\n')
-        
+
     # Return the hashvalue
     return HashValue.hexdigest()
