@@ -32,4 +32,37 @@ def FindHash(path) :
         # Close the file
         f.close()
 
-        return HashValue.hexdigest()
+    # Check if the given path is a directory
+    elif os.path.isdir(path) :
+
+        HashValue = hashlib.md5()
+        try:
+            for path2root, dirs, files in os.walk(path):
+                for filename in files:
+                    filepath = os.path.join(path2root,filename)
+
+                    try :
+                        # Try opening the file
+                        f = open(filepath, 'rb')
+
+                    except:
+                        # You can't open the file for some reason
+                        f.close()
+                        raise Exception('The requested file cannot be opened. Cannot calculate MD5 - Hash \n The path passed is : ' + path)
+
+                    # Read file in chunks and update the hashsum
+                    data = f.read(FileChunkSize)
+                    while(data) :
+                        HashValue.update(hashlib.md5(data).hexdigest())
+                        data = f.read(FileChunkSize)
+
+                    # Close the file
+                    f.close()
+        except:
+            import traceback
+            # Print the stack traceback
+            traceback.print_exc()
+            return -2
+
+    # Return the hashvalue
+    return HashValue.hexdigest()
