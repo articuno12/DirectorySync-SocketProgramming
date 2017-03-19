@@ -29,8 +29,29 @@ def FindShortList(StartTimeStamp,EndTimeStamp) :
     # first acquire info about all the files and then filter
     LongList = FindLongList()
 
-    for fileinfo in Longlist :
+    for fileinfo in LongList :
         if fileinfo[Mtime] >= StartTimeStamp and fileinfo[Mtime] <= EndTimeStamp :
             ShortList.append(fileinfo)
 
     return ShortList
+
+
+# Get Name,size,timestamp and type of each file in the directory
+# whos Name satisfy the given regular expression
+def GetRegList(regex) :
+    # Utility Varaiables
+    Name = 0
+    Mtime = 1
+    Size = 2
+
+
+    LongList = GetLongList()
+    RegList = []
+
+    pattern = re.compile(regex)
+
+    for fileinfo in LongList :
+        if pattern.match(fileinfo[Name]) :
+            RegList.append(fileinfo)
+
+    return RegList
