@@ -23,13 +23,13 @@ def FindHash(path) :
             f.close()
             raise Exception('The requested file cannot be opened. Cannot calculate MD5 - Hash \n The path passed is : ' + path)
 
-            # Read file in chunks and update the hashsum
+        # Read file in chunks and update the hashsum
+        data = f.read(FileChunkSize)
+        while(data) :
+            HashValue.update(hashlib.md5(data).hexdigest())
             data = f.read(FileChunkSize)
-            while(data) :
-                HashValue.update(hashlib.md5(data).hexdigest())
-                data = f.read(FileChunkSize)
 
-                # Close the file
-                f.close()
+        # Close the file
+        f.close()
 
-                return HashValue.hexdigest()
+        return HashValue.hexdigest()
