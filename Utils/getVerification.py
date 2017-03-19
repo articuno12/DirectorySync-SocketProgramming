@@ -7,6 +7,9 @@ def VerifyAll(path) :
     if not path :
         path ='./'
 
+    if not os.path.isdir(path) :
+        raise Exception('Verify All is expects a path to a directory . For single file use VerifyOne() ')
+
     data = []
     try:
         for path2root, dirs, files in os.walk(path):
@@ -28,3 +31,22 @@ def VerifyAll(path) :
         raise Exception('Error Caused while finding the hashvalue')
 
     return data
+
+
+def VerifyOne(path) :
+
+    # find the filename
+    filename = path.split('/')
+    filename = filename[-1]
+
+    # Check if its neither a file or directory
+    if not os.path.isfile(path) and not os.path.isdir(path) :
+        raise Exception('VerifyOne supports only file or directory. Unsupprted structure')
+
+    # find the files timestamp
+    stat = os.stat(path)
+
+    fileinfo = [ filename , (stat.st_atime,stat.st_mtime) , path ,
+                    getMd5Hash.FindHash(path)]
+
+    return entry
