@@ -1,6 +1,7 @@
 import pickle # for serialization
 import struct # to store numbers into string of fixed length
 import globalValues
+import select
 
 # To send data of at max size 10 MB
 def SendWord(conn,data) :
@@ -20,3 +21,20 @@ def SendWord(conn,data) :
     # Now send the actual data
     conn.sendall(data)
     return True
+
+
+# To recieve data of at max fize 10 MB
+def RecieveWord(conn) :
+    # First recieve the total length of the incoming data
+    conn.setblocking(0)
+    data = ''
+    toberecieved = 4
+    while toberecieved > 0 :
+        ready = select.select([conn],[],[],1)
+        if ready[0] :
+            recieved = conn.recv(toberecieved)
+            data = data + recieved
+            toberecieved -= len(recieved)
+    data, = struct.unpack('!I', data)
+
+    toberecieved = data
