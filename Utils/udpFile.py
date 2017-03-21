@@ -147,3 +147,22 @@ def Recieve(conn,sock) :
         return tobedownloaded
 
     info = tcpWord.Recieve(conn)
+
+    #Utility Varaiables
+    name = 0
+    timestamp = 1
+    path = 2
+    hashindex = 3
+    size = 4
+    permissions = 5
+
+    path = info[path]
+
+    try :
+        # opening the file to write
+        f = open(path,'wb')
+
+    except:
+        # You can't open the file for some reason
+        f.close()
+        raise Exception('Unable to Open the file for writing , Cannot recieve file : ' + path)
