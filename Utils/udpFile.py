@@ -72,4 +72,11 @@ def Send(conn,sock,path) :
     # Send the details to the client
     tcpWord.Send(conn,info)
 
+    # Look for HandShake
+    toberecieved = len('HandShake')
+    recieved,address = sock.recvfrom(toberecieved)
+
+    # HandShake Complete , signal the other side of the confirmation
+    tcpConfirmation.Send(conn)
+
     
