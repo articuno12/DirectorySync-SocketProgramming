@@ -124,6 +124,40 @@ elif confirmation == 'directory' :
     size = 4
     permissions = 5
 
-    path = details[path]
+    path = info[path]
 
-    
+    try :
+        # opening the file to write
+        f = open(path,'wb')
+
+    except:
+        # You can't open the file for some reason
+        f.close()
+        raise Exception('Unable to Open the file for writing , Cannot recieve file : ' + path)
+
+    totaltoberecieved = info[size]
+
+    conn.setblocking(0)
+
+    # Receive file in chunks and write them in the current directory
+    while totaltoberecieved > 0 :
+        # Recieve at max 10MB in 1 go
+        toberecieved = min(MaxMB,totaltoberecieved)
+        data = ''
+
+        while toberecieved > 0 :
+            ready = select.select([conn],[],[],1)
+            if ready[0] :
+                recieved = conn.recv(toberecieved)
+                data = data + recieved
+                toberecieved -= len(recieved)
+
+        totaltoberecieved -= len(data)
+        # write the data into the file
+        f.write(data)
+
+    # close the file secriptor
+    f.close()
+
+
+    return None,None
