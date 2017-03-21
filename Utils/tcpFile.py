@@ -85,7 +85,7 @@ def Send(conn,path) :
 
     while totaltobesent > 0 :
         # Send at max 10MB in 1 go
-        data = f.read(min(MaxMB,totaltobesent))
+        data = f.read(min(globalValues.MaxSize,totaltobesent))
         conn.sendall(data)
         totaltobesent -= len(data)
 
@@ -142,7 +142,7 @@ elif confirmation == 'directory' :
     # Receive file in chunks and write them in the current directory
     while totaltoberecieved > 0 :
         # Recieve at max 10MB in 1 go
-        toberecieved = min(MaxMB,totaltoberecieved)
+        toberecieved = min(globalValues.MaxSize,totaltoberecieved)
         data = ''
 
         while toberecieved > 0 :
