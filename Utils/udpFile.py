@@ -5,6 +5,7 @@ import tcpConfirmation
 import select
 import globalValues
 import getMd5Hash
+import struct
 
 # To Send Files via Udp
 # sock : the udp socket
@@ -79,4 +80,46 @@ def Send(conn,sock,path) :
     # HandShake Complete , signal the other side of the confirmation
     tcpConfirmation.Send(conn)
 
-    
+    # Send file now
+    try :
+        # Try opening the file
+        f = open(path, 'rb')
+
+    except:
+        # You can't open the file for some reason
+        f.close()
+        raise Exception('Unable to read a file , Cannot send file : ' + path)
+
+    # total number of bytes to be send
+    totaltobesent = size
+
+    # Count of the number of packets already sent
+    packetIndex = 0
+
+    while totaltobesent > 0 :
+        # Send at max globalValues.MaxSize  in 1 go
+        data = f.read(min(globalValues.MaxSize,totaltobesent))
+
+        # To avoid duplicay of the packets add to the data the packet number
+        # Convert the packet into a fixed length = 4 bytes string and append to
+        # the data
+        IndexString = struct.pack('!I', packetIndex)
+        newdata = data + IndexString
+
+        success = False
+
+        while not success :
+            # Send the data using udp port
+            sock.sendto(newdata,address)
+
+            # wait for confirmation via TCP
+            success = tcpConfirmation.Receive(conn)
+
+        # Confirm the packet has been recieved
+        totaltobesent -= len(data)
+        packetIndex += 1
+
+    # Close the file
+    f.close()
+
+    return None
