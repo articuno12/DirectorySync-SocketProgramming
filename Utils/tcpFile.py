@@ -3,10 +3,17 @@ import pickle # for serialization
 import tcpWord
 import select
 import globalValues
-
+import getMd5Hash
 
 # To Send Files
 def Send(conn,path) :
+
+    # Check if this something we can send
+    if not os.path.isdir(path) ot os.path.isfile(path) :
+        # something this program in developed to handle
+        # tell client that this file cannot be transfered
+        tcpWord.Send(conn,'unkown')
+        return None
 
     # Check if the asked is a directory
     if os.path.isdir(path) :
@@ -21,13 +28,13 @@ def Send(conn,path) :
 
                 # Check for those directories that have no file in them
                 if len(dirs) == 0 and len(files) == 0 :
-                    entry = {'path' : path2root , 'type' : 'directory'}
+                    entry = [path2root ,'directory']
                     tobedownloaded.append(entry)
 
                 for filename in files:
 
                     filepath = os.path.join(path2root,filename)
-                    entry = {'path' : filepath , 'type' : 'file'}
+                    entry = [ filepath ,  'file']
                     tobedownloaded.append(entry)
         except:
             import traceback
@@ -41,6 +48,26 @@ def Send(conn,path) :
         return None
 
     else :
-        tcp.Send(conn,'NotDir')
+        tcp.Send(conn,'file')
+
+    # Store the details about the file
+    hashvalue = getMd5Hash.FindHash(path)
+    # Find details about the file
+    stat = os.stat(path)
+
+    permissions = stat.st_mode
+    timestamp = (stat.st_atime,stat.st_mtime) #(last access,last modified)
+    size = stat.st_size # size of file in bytes
+
+    # Find the name of the file
+    filename = path
+    filename = filename.split('/')
+    filename = filename[-1]
+
+    # info = [name , timestamp, path, hash,size ,permissions]
+    info = [filename,timestamp,path,hashvalue,size,permissions]
+
+    # Send the details to the client
+    tcpWord.Send(conn,info)
 
     
