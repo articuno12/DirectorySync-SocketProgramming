@@ -104,7 +104,7 @@ def RecieveFile(conn) :
 
     # If the requested file is not supported
     if confirmation == 'unkown' :
-        return 'unkown','unkown'
+        return 'unkown'
 
     # If the Requested file is a directory
     elif confirmation == 'directory' :
