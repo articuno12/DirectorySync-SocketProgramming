@@ -49,4 +49,27 @@ def Send(conn,sock,path) :
 
         return None
 
+    else :
+        tcpWord.send(conn,'file')
+
+    # Store the details about the file
+    hashvalue = getMd5Hash.FindHash(path)
+    # Find details about the file
+    stat = os.stat(path)
+
+    permissions = stat.st_mode
+    timestamp = (stat.st_atime,stat.st_mtime) #(last access,last modified)
+    size = stat.st_size # size of file in bytes
+
+    # Find the name of the file
+    filename = path
+    filename = filename.split('/')
+    filename = filename[-1]
+
+    # info = [name , timestamp, path, hash,size ,permissions]
+    info = [filename,timestamp,path,hashvalue,size,permissions]
+
+    # Send the details to the client
+    tcpWord.Send(conn,info)
+
     
