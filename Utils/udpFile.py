@@ -9,6 +9,7 @@ import struct
 
 # To Send Files via Udp
 # sock : the udp socket
+# conn : the tcp socket
 def Send(conn,sock,path) :
 
     # Check if this something we can send
@@ -123,3 +124,26 @@ def Send(conn,sock,path) :
     f.close()
 
     return None
+
+
+# To Recieve Files via UDP
+# sock : the udp socket
+# conn : the tcp socket
+def Recieve(conn,sock) :
+
+    # Recieve Confirmation  that requested files is a file or directory
+    confirmation = tcpWord.Recieve(conn)
+
+    # If the requested file is not supported
+    if confirmation == 'unkown' :
+        return 'unkown','unkown'
+
+    # If the Requested file is a directory
+    elif confirmation == 'directory' :
+
+        # Recieve directory and file structure
+        tobedownloaded = tcpWord.Recieve(conn)
+
+        return tobedownloaded
+
+    info = tcpWord.Recieve(conn)

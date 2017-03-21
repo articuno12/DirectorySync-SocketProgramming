@@ -107,7 +107,7 @@ def RecieveFile(conn) :
         return 'unkown','unkown'
 
     # If the Requested file is a directory
-elif confirmation == 'directory' :
+    elif confirmation == 'directory' :
 
         # Recieve directory and file structure
         tobedownloaded = tcpWord.Recieve(conn)
@@ -165,4 +165,4 @@ elif confirmation == 'directory' :
     # Update the timestamp of the file
     os.utime(path,info[timestamp])
 
-    return None,None
+    return None
