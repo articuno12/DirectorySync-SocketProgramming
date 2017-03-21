@@ -93,3 +93,37 @@ def Send(conn,path) :
     f.close()
 
     return None
+
+
+
+# To Recieve Files
+def RecieveFile(conn) :
+
+    # Recieve Confirmation  that requested files is a file or directory
+    confirmation = tcpWord.Recieve(conn)
+
+    # If the requested file is not supported
+    if confirmation == 'unkown' :
+        return 'unkown','unkown'
+
+    # If the Requested file is a directory
+elif confirmation == 'directory' :
+
+        # Recieve directory and file structure
+        tobedownloaded = tcpWord.Recieve(conn)
+
+        return tobedownloaded
+
+    info = tcpWord.Recieve(conn)
+
+    #Utility Varaiables
+    name = 0
+    timestamp = 1
+    path = 2
+    hashindex = 3
+    size = 4
+    permissions = 5
+
+    path = details[path]
+
+    
