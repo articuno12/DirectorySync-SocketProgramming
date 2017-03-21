@@ -70,4 +70,26 @@ def Send(conn,path) :
     # Send the details to the client
     tcpWord.Send(conn,info)
 
-    
+    # Send file now
+    try :
+        # Try opening the file
+        f = open(path, 'rb')
+
+    except :
+        # You can't open the file for some reason
+        f.close()
+        raise Exception('Unable to open the file for sending , Cannot send file : ' + path)
+
+    # Read file in chunks and sent them
+    totaltobesent = size
+
+    while totaltobesent > 0 :
+        # Send at max 10MB in 1 go
+        data = f.read(min(MaxMB,totaltobesent))
+        conn.sendall(data)
+        totaltobesent -= len(data)
+
+    # Close the file
+    f.close()
+
+    return None
