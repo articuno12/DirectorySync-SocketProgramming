@@ -159,5 +159,10 @@ elif confirmation == 'directory' :
     # close the file secriptor
     f.close()
 
+    # Update permissions of the file
+    os.chmod(path,info[permissions])
+
+    # Update the timestamp of the file
+    os.utime(path,info[timestamp])
 
     return None,None
