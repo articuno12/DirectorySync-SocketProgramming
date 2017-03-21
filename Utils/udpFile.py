@@ -166,3 +166,13 @@ def Recieve(conn,sock) :
         # You can't open the file for some reason
         f.close()
         raise Exception('Unable to Open the file for writing , Cannot recieve file : ' + path)
+
+
+    # Perform Handshake
+    HandshakeSuccessful = False
+    while not HandshakeSuccessful :
+        sock.sendto('HandShake',(globalValues.host,globalValues.port))
+        HandshakeSuccessful = ReceiveConfirmation(conn)
+
+
+    
