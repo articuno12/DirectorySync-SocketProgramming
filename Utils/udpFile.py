@@ -172,7 +172,46 @@ def Recieve(conn,sock) :
     HandshakeSuccessful = False
     while not HandshakeSuccessful :
         sock.sendto('HandShake',(globalValues.host,globalValues.port))
-        HandshakeSuccessful = ReceiveConfirmation(conn)
+        HandshakeSuccessful = tcpConfirmation.Receive(conn)
 
 
-    
+    totaltoberecieved = info[size]
+
+    # The package number that should be arriving now
+    expectedPackageIndex = 0
+
+    # Receive file in chunks and write them in the current directory
+    while totaltoberecieved > 0 :
+        # Recieve at max 10MB in 1 go
+        # +4 for the package Index attached to the original data
+        toberecieved = min(MaxMB,totaltoberecieved) + 4
+
+        # Recieve data via udp
+        recieved,address = sock.recvfrom(toberecieved)
+
+        # current recieved contains the actual data and last 4 bytes as the package
+        # number . We need to seprate them .
+        recievedPackageIndex = recieved[-4:]
+        recievedPackageIndex, = struct.unpack('!I', recievedPackageIndex)
+
+        # Check for duplicate package
+        if not recievedPackageIndex == expectedPackageIndex :
+            print "Recieved package index ",recievedPackageIndex
+            print "Expected Package index ",expectedPackageIndex
+            continue
+
+        data = recieved[:-4]
+
+        # Send confirmation to the other side
+        tcpConfirmation.Send(conn)
+
+        totaltoberecieved -= len(data)
+        expectedPackageIndex += 1
+
+        # write the data into the file
+        f.write(data)
+
+    # close the file secriptor
+    f.close()
+
+    return None,None
