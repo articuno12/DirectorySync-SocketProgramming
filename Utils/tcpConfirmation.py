@@ -7,3 +7,21 @@ def Send(conn) :
     conn.sendall(data)
 
     return True
+
+# Function to recieve confirmation signal , if no signal is returned within 1
+# second it assumes not confirmed
+def Receive(conn) :
+    conn.setblocking(0)
+    data = ''
+    toberecieved = 4
+    while toberecieved > 0 :
+        ready = select.select([conn],[],[],1)
+        if ready[0] :
+            recieved = conn.recv(toberecieved)
+            data = data + recieved
+            toberecieved -= len(recieved)
+        elif toberecieved == 4 :
+            return False
+    data, = struct.unpack('!I', data)
+
+    return bool(data)
