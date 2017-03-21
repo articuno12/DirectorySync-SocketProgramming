@@ -214,4 +214,10 @@ def Recieve(conn,sock) :
     # close the file secriptor
     f.close()
 
-    return None,None
+    # Update permissions of the file
+    os.chmod(path,details['permissions'])
+
+    # Update the timestamp of the file
+    os.utime(path,details['timestamp'])
+
+    return None 
