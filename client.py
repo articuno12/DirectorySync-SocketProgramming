@@ -9,6 +9,7 @@ import Utils.globalValues as globalValues
 import Utils.tcpFile as tcpFile
 import Utils.tcpWord as tcpWord
 import Utils.udpFile as udpFile
+import Utils.getMd5Hash as getMd5Hash
 
 # Open log file
 logfile = open('log_client.txt','w')
@@ -137,6 +138,46 @@ def Execute(Command) :
 
             else :
                 pass
+
+        elif Command[0] == 'hash' :
+            if Command[1] == 'verify' :
+                result = tcpWord.Recieve(conn)
+
+                filename = 0
+                timestamp = 1
+                path = 2
+                hashvalue = 3
+
+                if not os.path.exists(result[path]) :
+                    print "Name-",result[filename] ,"Timestamp-",result[timestamp][1] ,"Hash-",result[hashvalue], "Not Present"
+
+                elif getMd5Hash.FindHash(result[path]) != result[hashvalue] :
+                    print "Name-",result[filename] ,"Timestamp-",result[timestamp][1] ,"Hash-",result[hashvalue],"Modified"
+
+                else :
+                    print "Name-",result[filename] ,"Timestamp-",result[timestamp][1] ,"Hash-",result[hashvalue],"No Change"
+
+            elif Command[1] == 'checkall' :
+
+                resultlist = tcpWord.Recieve(conn)
+
+                filename = 0
+                timestamp = 1
+                path = 2
+                hashvalue = 3
+
+                for result in resultlist :
+                    if not os.path.exists(result[path]) :
+                        print "Name-",result[filename] ,"Timestamp-",result[timestamp][1] ,"Hash-",result[hashvalue], "Not Present"
+
+                    elif getMd5Hash.FindHash(result[path]) != result[hashvalue] :
+                        print "Name-",result[filename] ,"Timestamp-",result[timestamp][1] ,"Hash-",result[hashvalue],"Modified"
+
+                    else :
+                        print "Name-",result[filename] ,"Timestamp-",result[timestamp][1] ,"Hash-",result[hashvalue],"No Change"
+
+        else :
+            pass
 
         
 while True :
