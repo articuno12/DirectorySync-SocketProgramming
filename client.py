@@ -12,8 +12,29 @@ import Utils.udpFile as udpFile
 # Open log file
 logfile = open('log_client.txt','w')
 
+def Execute(Command) :
+    try :
 
+        tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        tcp.connect((globalValues.host, globalValues.port))
 
+        sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+        tcpWord.Send(conn,Command)
+
+        Command = Command.split(' ')
+
+        if Command[0] == 'index' :
+
+            result = tcpWord.Recieve(conn)
+            filename = 0
+            timestamp = 1
+            size = 2
+
+            for fileinfo in result :
+                print fileinfo[filename] , fileinfo[timestamp] ,fileinfo[size]
+
+        
 while True :
     try  :
         Command =  raw_input("input : ")
