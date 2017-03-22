@@ -179,7 +179,33 @@ def Execute(Command) :
         else :
             pass
 
-        
+        print >> logfile , "User Command " + ' '.join(Command) + 'completed'
+
+        tcp.close()
+        sock.close()
+        print >> logfile , "TCP port closed"
+        print >> logfile , "UDP port closed"
+        print "Command Executed"
+
+    except KeyboardInterrupt :
+        print >> logfile , "Keyboard-Interrupt Client"
+
+        tcp.close()
+        sock.close()
+        print >> logfile , "TCP port closed"
+        print >> logfile , "UDP port closed"
+        print "Transfer Stopped by the user : Closing port"
+
+    except Exception as e :
+        print >> logfile , "Exception Raised : " , e
+        tcp.close()
+        sock.close()
+
+        print >> logfile , "TCP port closed"
+        print >> logfile , "UDP port closed"
+        print "Transfer Stopped bcz of exception : Closing port"
+
+
 while True :
     try  :
         Command =  raw_input("input : ")
