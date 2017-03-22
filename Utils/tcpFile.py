@@ -7,9 +7,8 @@ import getMd5Hash
 
 # To Send Files
 def Send(conn,path) :
-
     # Check if this something we can send
-    if not os.path.isdir(path) ot os.path.isfile(path) :
+    if not (os.path.isdir(path) or os.path.isfile(path)) :
         # something this program in developed to handle
         # tell client that this file cannot be transfered
         tcpWord.Send(conn,'unkown')
@@ -48,7 +47,7 @@ def Send(conn,path) :
         return None
 
     else :
-        tcp.Send(conn,'file')
+        tcpWord.Send(conn,'file')
 
     # Store the details about the file
     hashvalue = getMd5Hash.FindHash(path)
@@ -97,7 +96,7 @@ def Send(conn,path) :
 
 
 # To Recieve Files
-def RecieveFile(conn) :
+def Recieve(conn) :
 
     # Recieve Confirmation  that requested files is a file or directory
     confirmation = tcpWord.Recieve(conn)

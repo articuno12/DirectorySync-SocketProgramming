@@ -22,13 +22,13 @@ def Execute(Command) :
 
         sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
-        tcpWord.Send(conn,Command)
+        tcpWord.Send(tcp,Command)
 
         Command = Command.split(' ')
 
         if Command[0] == 'index' :
 
-            result = tcpWord.Recieve(conn)
+            result = tcpWord.Recieve(tcp)
             filename = 0
             timestamp = 1
             size = 2
@@ -40,10 +40,10 @@ def Execute(Command) :
             if Command[1] == 'tcp' :
                 # if the recieved arguments are None => requested file was a file
                 # else it was a directory
-                tobedownloaded = tcpWord.Recieve(conn)
+                tobedownloaded = tcpFile.Recieve(tcp)
 
                 # if the request was a directory
-                if tobedownloaded :
+                if tobedownloaded is not None:
                     # find the directories that have no file in them
                     directories = []
                     for fileinfo in tobedownloaded :
@@ -90,10 +90,11 @@ def Execute(Command) :
 
                 # if the recieved arguments are None => requested file was a file
                 # else it was a directory
-                tobedownloaded = tcpWord.Recieve(conn)
-
+                tobedownloaded = udpFile.Recieve(tcp,sock)
+                print tobedownloaded
+                
                 # if the request was a directory
-                if tobedownloaded :
+                if tobedownloaded is not None :
                     # find the directories that have no file in them
                     directories = []
                     for fileinfo in tobedownloaded :
@@ -141,7 +142,7 @@ def Execute(Command) :
 
         elif Command[0] == 'hash' :
             if Command[1] == 'verify' :
-                result = tcpWord.Recieve(conn)
+                result = tcpWord.Recieve(tcp)
 
                 filename = 0
                 timestamp = 1
@@ -159,7 +160,7 @@ def Execute(Command) :
 
             elif Command[1] == 'checkall' :
 
-                resultlist = tcpWord.Recieve(conn)
+                resultlist = tcpWord.Recieve(tcp)
 
                 filename = 0
                 timestamp = 1
@@ -196,14 +197,14 @@ def Execute(Command) :
         print >> logfile , "UDP port closed"
         print "Transfer Stopped by the user : Closing port"
 
-    except Exception as e :
-        print >> logfile , "Exception Raised : " , e
-        tcp.close()
-        sock.close()
-
-        print >> logfile , "TCP port closed"
-        print >> logfile , "UDP port closed"
-        print "Transfer Stopped bcz of exception : Closing port"
+    # except Exception as e :
+    #     print >> logfile , "Exception Raised : " , e
+    #     tcp.close()
+    #     sock.close()
+    #
+    #     print >> logfile , "TCP port closed"
+    #     print >> logfile , "UDP port closed"
+    #     print "Transfer Stopped bcz of exception : Closing port"
 
 
 while True :
@@ -211,16 +212,19 @@ while True :
         Command =  raw_input("input : ")
         # Command = 'index longlist'
         print >> logfile , "User Command is ",Command
-        ConnectToListner(Command)
+        Execute(Command)
 
     except KeyboardInterrupt :
         print >> logfile , "Client Shutting Down"
+        print "Client Closed"
+        logfile.close()
         sys.exit(0)
 
-    except Exception as e :
-        print >> logfile , e
-        print >> logfile , "Client Shutting Down"
-        sys.exit(0)
+    # except Exception as e :
+    #     print >> logfile , e
+    #     print >> logfile , "Client Shutting Down"
+    #     print "Client Closed"
+    #     sys.exit(0)
 
 logfile.close()
 print "Client Closed"

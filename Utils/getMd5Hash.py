@@ -10,7 +10,7 @@ def FindHash(path) :
         raise Exception('The given path does not exist. Cannot calculate MD5 - Hash \n The path passed is : ' + path)
 
     # Check if the given path is a file
-    if not os.path.isfile(path) :
+    if os.path.isfile(path) :
 
         HashValue = hashlib.md5()
 
@@ -63,7 +63,7 @@ def FindHash(path) :
             # Print the stack traceback
             traceback.print_exc()
             raise Exception('Error Caused while finding the hashvalue')
-            
+
     else :
         raise Exception('Function Implemented only to find MD5-Hash for files or directory. \n The given path is neither a file or directory.\n')
 

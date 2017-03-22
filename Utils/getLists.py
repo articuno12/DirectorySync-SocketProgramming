@@ -45,7 +45,7 @@ def GetRegList(regex) :
     Size = 2
 
 
-    LongList = GetLongList()
+    LongList = FindLongList()
     RegList = []
 
     pattern = re.compile(regex)

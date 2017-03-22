@@ -1,5 +1,6 @@
 import select
 import socket
+import sys
 import Utils.getLists as getLists
 import Utils.getMd5Hash as Md5Hash
 import Utils.getVerification as getVerification
@@ -50,7 +51,7 @@ while True:
 
             tcpWord.Send(conn,ans)
 
-        elif command == 'download' :
+        elif request[0] == 'download' :
 
             if request[1] == 'tcp' :
                 tcpFile.Send(conn,'./' + request[2])
@@ -62,13 +63,14 @@ while True:
                 # Invalid flag
                 pass
 
-        elif command == 'hash' :
+        elif request[0] == 'hash' :
             if request[1] == 'verify' :
                 ans = getVerification.VerifyOne('./' + request[2])
                 tcpWord.Send(conn,ans)
 
             elif request[1] == 'checkall' :
                 ans = getVerification.VerifyAll()
+                tcpWord.Send(conn,ans)
 
             else :
                 pass
@@ -100,23 +102,23 @@ while True:
         # exit the program
         sys.exit(0)
 
-    except Exception as e :
-        print >> logfile ,"Exception Raised : ", e
-        try :
-            conn.close()
-            print >> logfile , 'Connection to client closed'
-
-        except NameError :
-            print >> logfile , 'No client connected'
-
-        # Close the sockets
-        tcp.close()
-        udp.close()
-
-        print >> logfile , 'Tcp Socket closed'
-        print >> logfile , 'Udp Socket closed'
-
-        logfile.close()
-        print 'Server Closed'
-        # exit the program
-        sys.exit(0)
+    # except Exception as e :
+    #     print >> logfile ,"Exception Raised : ", e
+    #     try :
+    #         conn.close()
+    #         print >> logfile , 'Connection to client closed'
+    #
+    #     except NameError :
+    #         print >> logfile , 'No client connected'
+    #
+    #     # Close the sockets
+    #     tcp.close()
+    #     udp.close()
+    #
+    #     print >> logfile , 'Tcp Socket closed'
+    #     print >> logfile , 'Udp Socket closed'
+    #
+    #     logfile.close()
+    #     print 'Server Closed'
+    #     # exit the program
+    #     sys.exit(0)

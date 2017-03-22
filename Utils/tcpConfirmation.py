@@ -1,3 +1,6 @@
+import struct
+import select
+
 # Function to send confirmation signal
 def Send(conn) :
     # Send 1 for confirmation

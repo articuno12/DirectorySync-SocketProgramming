@@ -13,7 +13,7 @@ import struct
 def Send(conn,sock,path) :
 
     # Check if this something we can send
-    if not os.path.isdir(path) ot os.path.isfile(path) :
+    if not (os.path.isdir(path) or os.path.isfile(path)) :
         # something this program in developed to handle
         # tell client that this file cannot be transfered
         tcpWord.Send(conn,'unkown')
@@ -52,7 +52,7 @@ def Send(conn,sock,path) :
         return None
 
     else :
-        tcpWord.send(conn,'file')
+        tcpWord.Send(conn,'file')
 
     # Store the details about the file
     hashvalue = getMd5Hash.FindHash(path)
@@ -184,7 +184,7 @@ def Recieve(conn,sock) :
     while totaltoberecieved > 0 :
         # Recieve at max 10MB in 1 go
         # +4 for the package Index attached to the original data
-        toberecieved = min(MaxMB,totaltoberecieved) + 4
+        toberecieved = min(globalValues.MaxSize,totaltoberecieved) + 4
 
         # Recieve data via udp
         recieved,address = sock.recvfrom(toberecieved)
@@ -215,9 +215,9 @@ def Recieve(conn,sock) :
     f.close()
 
     # Update permissions of the file
-    os.chmod(path,details['permissions'])
+    os.chmod(path,info[permissions])
 
     # Update the timestamp of the file
-    os.utime(path,details['timestamp'])
+    os.utime(path,info[timestamp])
 
     return None
