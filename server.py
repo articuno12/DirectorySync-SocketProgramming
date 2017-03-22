@@ -50,4 +50,32 @@ while True:
 
             tcpWord.Send(conn,ans)
 
-        
+        elif command == 'download' :
+
+            if request[1] == 'tcp' :
+                tcpFile.Send(conn,'./' + request[2])
+
+            elif request[1] == 'udp' :
+                udpFile.Send(conn,udp,'./' + request[2])
+
+            else :
+                # Invalid flag
+                pass
+
+        elif command == 'hash' :
+            if request[1] == 'verify' :
+                ans = getVerification.VerifyOne('./' + request[2])
+                tcpWord.Send(conn,ans)
+
+            elif request[1] == 'checkall' :
+                ans = getVerification.VerifyAll()
+
+            else :
+                pass
+        else :
+            pass
+
+        # close the Connection
+        conn.close()
+
+    
