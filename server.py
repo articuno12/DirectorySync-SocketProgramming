@@ -4,7 +4,9 @@ import Utils.getLists as getLists
 import Utils.getMd5Hash as Md5Hash
 import Utils.getVerification as getVerification
 import Utils.globalValues as globalValues
-
+import Utils.tcpFile as tcpFile
+import Utils.tcpWord as tcpWord
+import Utils.udpFile as udpFile
 
 # SET UP TCP
 tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -24,21 +26,28 @@ udp.bind((globalValues.host,globalValues.port))
 logfile = open('log_server.txt','w')
 
 while True:
-    conn, addr = s.accept()
-    print 'Got connection from', addr
-    data = conn.recv(1024)
-    print "Second Timed data is" , data
+    try :
+        print >> logfile , "Server Listening ..."
+        conn, addr = tcp.accept()
+        print >> logfile , 'Got connection from ip :', addr[0] , ' port : ',addr[1]
 
-    print('Server received', repr(data))
+        # Listen to the request from the client
+        request = tcpWord.Recieve(conn)
 
-    f = open(filename,'rb')
-    l = f.read(1024)
-    while (l):
-       conn.send(l)
-       print('Sent ',repr(l))
-       l = f.read(1024)
-    f.close()
+        print >> logfile , 'Server recieved request : ',request
 
-    print('Done sending')
-    conn.send('Thank you for connecting')
-    conn.close()
+        request = request.split(' ')
+
+        if request[0] == 'index' :
+            if request[1] == 'longlist' :
+                ans = getLists.FindLongList()
+
+            elif request[1] == 'shortlist' :
+                ans = getLists.FindShortList(int(request[2]),int(request[3]))
+
+            elif request[1] == 'regex':
+                ans = getLists.GetRegList(request[2])
+
+            tcpWord.Send(conn,ans)
+
+        
