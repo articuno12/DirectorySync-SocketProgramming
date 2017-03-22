@@ -78,4 +78,45 @@ while True:
         # close the Connection
         conn.close()
 
-    
+    except KeyboardInterrupt :
+        print >> logfile , 'Server recieved KeyboardInterrupt'
+
+        try :
+            conn.close()
+            print >> logfile , 'Connection to client closed'
+
+        except NameError :
+            print >> logfile , 'No client connected'
+
+        # Close the sockets
+        tcp.close()
+        udp.close()
+
+        print >> logfile , 'Tcp Socket closed'
+        print >> logfile , 'Udp Socket closed'
+
+        logfile.close()
+        print 'Server Closed'
+        # exit the program
+        sys.exit(0)
+
+    except Exception as e :
+        print >> logfile ,"Exception Raised : ", e
+        try :
+            conn.close()
+            print >> logfile , 'Connection to client closed'
+
+        except NameError :
+            print >> logfile , 'No client connected'
+
+        # Close the sockets
+        tcp.close()
+        udp.close()
+
+        print >> logfile , 'Tcp Socket closed'
+        print >> logfile , 'Udp Socket closed'
+
+        logfile.close()
+        print 'Server Closed'
+        # exit the program
+        sys.exit(0)
